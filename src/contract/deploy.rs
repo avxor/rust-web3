@@ -184,7 +184,7 @@ impl<T: Transport> Builder<T> {
             let address: String = hex::encode(address);
             code_hex = code_hex.replacen(&replace, &address, 1);
         }
-        code_hex = code_hex.replace("\"", "").replace("0x", ""); // This is to fix truffle + serde_json redundant `"` and `0x`
+        code_hex = code_hex.replace('\"', "").replace("0x", ""); // This is to fix truffle + serde_json redundant `"` and `0x`
         let code =
             hex::decode(&code_hex).map_err(|e| ethabi::Error::InvalidName(format!("hex decode error: {}", e)))?;
 

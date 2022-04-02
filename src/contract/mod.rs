@@ -44,6 +44,8 @@ pub struct Options {
     pub max_fee_per_gas: Option<U256>,
     /// miner bribe
     pub max_priority_fee_per_gas: Option<U256>,
+    /// chain ID
+    pub chain_id: Option<u64>,
 }
 
 impl Options {
@@ -140,6 +142,7 @@ impl<T: Transport> Contract<T> {
             access_list,
             max_fee_per_gas,
             max_priority_fee_per_gas,
+            chain_id: _,
         } = options;
         self.eth
             .send_transaction(TransactionRequest {
@@ -359,6 +362,7 @@ mod contract_signing {
                 access_list: options.access_list,
                 max_fee_per_gas: options.max_fee_per_gas,
                 max_priority_fee_per_gas: options.max_priority_fee_per_gas,
+                chain_id: options.chain_id,
                 ..Default::default()
             };
             if let Some(gas) = options.gas {
