@@ -338,7 +338,8 @@ mod contract_signing {
     };
 
     impl<T: Transport> Contract<T> {
-        async fn sign(
+        /// Create and sign a transaction.
+        pub async fn sign(
             &self,
             func: &str,
             params: impl Tokenize,
