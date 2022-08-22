@@ -2,7 +2,7 @@ use crate::types::{Bytes, H160, H2048, H256, H64, U256, U64};
 use serde::{de::Error, ser::SerializeStruct, Deserialize, Deserializer, Serialize, Serializer};
 
 /// The block header type returned from RPC calls.
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct BlockHeader {
     /// Hash of the block
     pub hash: Option<H256>,
@@ -54,7 +54,7 @@ pub struct BlockHeader {
 
 /// The block type returned from RPC calls.
 /// This is generic over a `TX` type.
-#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Block<TX> {
     /// Hash of the block
     pub hash: Option<H256>,
@@ -126,7 +126,7 @@ where
 }
 
 /// Block Number
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum BlockNumber {
     /// Latest block
     Latest,
@@ -177,7 +177,7 @@ impl<'a> Deserialize<'a> for BlockNumber {
 }
 
 /// Block Identifier
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub enum BlockId {
     /// By Hash
     Hash(H256),

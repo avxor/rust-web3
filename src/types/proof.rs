@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 ///Proof struct returned by eth_getProof method
 ///
 /// https://eips.ethereum.org/EIPS/eip-1186
-#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Proof {
     /// the balance of the account. See eth_getBalance
     pub balance: U256,
@@ -26,7 +26,7 @@ pub struct Proof {
 }
 
 /// A key-value pair and it's state proof.
-#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct StorageProof {
     /// the requested storage key
     pub key: U256,

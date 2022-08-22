@@ -1,7 +1,7 @@
 use crate::types::{BlockId, Index, H256};
 
 /// Transaction Identifier
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum TransactionId {
     /// By hash
     Hash(H256),

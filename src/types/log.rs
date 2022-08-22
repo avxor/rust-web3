@@ -2,7 +2,7 @@ use crate::types::{BlockNumber, Bytes, Index, H160, H256, U256, U64};
 use serde::{Deserialize, Serialize, Serializer};
 
 /// A log produced by a transaction.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Log {
     /// H160
     pub address: H160,

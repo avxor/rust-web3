@@ -24,7 +24,7 @@ pub use crate::contract::error::Error;
 pub type Result<T> = std::result::Result<T, Error>;
 
 /// Contract Call/Query Options
-#[derive(Default, Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
 pub struct Options {
     /// Fixed gas limit
     pub gas: Option<U256>,

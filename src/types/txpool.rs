@@ -10,12 +10,12 @@ use std::collections::BTreeMap;
 ///
 /// See [here](https://geth.ethereum.org/docs/rpc/ns-txpool#txpool_content) for more details
 ///
-#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct TxpoolContentInfo {
-    /// pending tx
-    pub pending: BTreeMap<Address, BTreeMap<String, Transaction>>,
-    /// queued tx
-    pub queued: BTreeMap<Address, BTreeMap<String, Transaction>>,
+  /// pending tx
+  pub pending: BTreeMap<Address, BTreeMap<String, Transaction>>,
+  /// queued tx
+  pub queued: BTreeMap<Address, BTreeMap<String, Transaction>>,
 }
 
 /// Transaction Pool Inspect Info
@@ -28,12 +28,12 @@ pub struct TxpoolContentInfo {
 ///
 /// See [here](https://geth.ethereum.org/docs/rpc/ns-txpool#txpool_inspect) for more details
 ///
-#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct TxpoolInspectInfo {
-    /// pending tx
-    pub pending: BTreeMap<Address, BTreeMap<String, String>>,
-    /// queued tx
-    pub queued: BTreeMap<Address, BTreeMap<String, String>>,
+  /// pending tx
+  pub pending: BTreeMap<Address, BTreeMap<String, String>>,
+  /// queued tx
+  pub queued: BTreeMap<Address, BTreeMap<String, String>>,
 }
 
 /// Transaction Pool Status
@@ -44,21 +44,21 @@ pub struct TxpoolInspectInfo {
 ///
 /// See [here](https://geth.ethereum.org/docs/rpc/ns-txpool#txpool_status) for more details
 ///
-#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct TxpoolStatus {
-    /// number of pending tx
-    pub pending: U64,
-    /// number of queued tx
-    pub queued: U64,
+  /// number of pending tx
+  pub pending: U64,
+  /// number of queued tx
+  pub queued: U64,
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{TxpoolContentInfo, TxpoolInspectInfo, TxpoolStatus};
+  use super::{TxpoolContentInfo, TxpoolInspectInfo, TxpoolStatus};
 
-    #[test]
-    fn should_deserialize_txpool_content() {
-        let txpool_content_str = r#"
+  #[test]
+  fn should_deserialize_txpool_content() {
+    let txpool_content_str = r#"
 {
   "pending": {
     "0x0513dc7403e074f5c77368ee2819fa3a65b5cf80": {
@@ -164,15 +164,15 @@ mod tests {
     }
   }
 }"#;
-        let deserialized: TxpoolContentInfo = serde_json::from_str(txpool_content_str).unwrap();
-        let serialized: String = serde_json::to_string_pretty(&deserialized).unwrap();
-        // println!("{}", serialized);
-        assert_eq!(txpool_content_str.trim(), serialized);
-    }
+    let deserialized: TxpoolContentInfo = serde_json::from_str(txpool_content_str).unwrap();
+    let serialized: String = serde_json::to_string_pretty(&deserialized).unwrap();
+    // println!("{}", serialized);
+    assert_eq!(txpool_content_str.trim(), serialized);
+  }
 
-    #[test]
-    fn should_deserialize_txpool_inspect() {
-        let txpool_inspect_str = r#"
+  #[test]
+  fn should_deserialize_txpool_inspect() {
+    let txpool_inspect_str = r#"
 {
   "pending": {
     "0x0512261a7486b1e29704ac49a5eb355b6fd86872": {
@@ -195,20 +195,20 @@ mod tests {
     }
   }
 }"#;
-        let deserialized: TxpoolInspectInfo = serde_json::from_str(txpool_inspect_str).unwrap();
-        let serialized: String = serde_json::to_string_pretty(&deserialized).unwrap();
-        assert_eq!(txpool_inspect_str.trim(), serialized);
-    }
+    let deserialized: TxpoolInspectInfo = serde_json::from_str(txpool_inspect_str).unwrap();
+    let serialized: String = serde_json::to_string_pretty(&deserialized).unwrap();
+    assert_eq!(txpool_inspect_str.trim(), serialized);
+  }
 
-    #[test]
-    fn should_deserialize_txpool_status() {
-        let txpool_status_str = r#"
+  #[test]
+  fn should_deserialize_txpool_status() {
+    let txpool_status_str = r#"
 {
   "pending": "0x23",
   "queued": "0x20"
 }"#;
-        let deserialized: TxpoolStatus = serde_json::from_str(txpool_status_str).unwrap();
-        let serialized: String = serde_json::to_string_pretty(&deserialized).unwrap();
-        assert_eq!(txpool_status_str.trim(), serialized);
-    }
+    let deserialized: TxpoolStatus = serde_json::from_str(txpool_status_str).unwrap();
+    let serialized: String = serde_json::to_string_pretty(&deserialized).unwrap();
+    assert_eq!(txpool_status_str.trim(), serialized);
+  }
 }

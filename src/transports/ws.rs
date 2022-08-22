@@ -518,7 +518,7 @@ pub mod compat {
 
     /// Create new TcpStream object.
     pub async fn raw_tcp_stream(addrs: String) -> io::Result<tokio::net::TcpStream> {
-        Ok(tokio::net::TcpStream::connect(addrs).await?)
+        tokio::net::TcpStream::connect(addrs).await
     }
 
     /// Wrap given argument into compatibility layer.

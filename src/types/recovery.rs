@@ -9,7 +9,7 @@ use std::{
 /// Note that the signature data is in 'Electrum' notation and may have chain
 /// replay protection applied. That means that `v` is expected to be `27`, `28`,
 /// or `35 + chain_id * 2` or `36 + chain_id * 2`.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Recovery {
     /// The message to recover
     pub message: RecoveryMessage,
@@ -102,7 +102,7 @@ impl<'a> From<&'a SignedTransaction> for Recovery {
 /// The message data can either be a binary message that is first hashed
 /// according to EIP-191 and then recovered based on the signature or a
 /// precomputed hash.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RecoveryMessage {
     /// Message bytes
     Data(Vec<u8>),

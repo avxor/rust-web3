@@ -2,7 +2,7 @@ use crate::types::{AccessList, Address, Bytes, CallRequest, H256, U256, U64};
 use serde::{Deserialize, Serialize};
 
 /// Struct representing signed data returned from `Accounts::sign` method.
-#[derive(Clone, Debug, Deserialize, Serialize, PartialEq)]
+#[derive(Clone, Debug, Deserialize, Serialize, PartialEq, Eq)]
 pub struct SignedData {
     /// The original message that was signed.
     pub message: Vec<u8>,
@@ -37,7 +37,7 @@ pub struct SignedData {
 /// interacting with complex contracts. It is recommended when interacting
 /// with contracts to use `Eth::estimate_gas` to estimate the required gas for
 /// the transaction.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TransactionParameters {
     /// Transaction nonce (None for account transaction count)
     pub nonce: Option<U256>,
@@ -125,7 +125,7 @@ impl From<TransactionParameters> for CallRequest {
 }
 
 /// Data for offline signed transaction
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct SignedTransaction {
     /// The given message hash
     pub message_hash: H256,

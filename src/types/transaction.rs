@@ -2,7 +2,7 @@ use crate::types::{Address, Bytes, Index, Log, H2048, H256, U256, U64};
 use serde::{Deserialize, Serialize};
 
 /// Description of a Transaction, pending or in the chain.
-#[derive(Debug, Default, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Deserialize, Serialize)]
 pub struct Transaction {
     /// Hash
     pub hash: H256,
@@ -58,7 +58,7 @@ pub struct Transaction {
 }
 
 /// "Receipt" of an executed transaction: details of its execution.
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Receipt {
     /// Transaction hash.
     #[serde(rename = "transactionHash")]
@@ -111,7 +111,7 @@ pub struct Receipt {
 }
 
 /// Raw bytes of a signed, but not yet sent transaction
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RawTransaction {
     /// Signed transaction as raw bytes
     pub raw: Bytes,
@@ -123,7 +123,7 @@ pub struct RawTransaction {
 pub type AccessList = Vec<AccessListItem>;
 
 /// Access list item
-#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AccessListItem {
     /// Accessed address

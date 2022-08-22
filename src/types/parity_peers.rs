@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 /// Stores active peer count, connected count, max connected peers
 /// and a list of peers for parity node
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub struct ParityPeerType {
     /// number of active peers
     pub active: usize,
@@ -17,7 +17,7 @@ pub struct ParityPeerType {
 }
 
 /// details of a peer
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub struct ParityPeerInfo {
     /// id of peer
     pub id: Option<String>,
@@ -32,7 +32,7 @@ pub struct ParityPeerInfo {
 }
 
 /// ip address of both local and remote
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct PeerNetworkInfo {
     /// remote peer address
@@ -42,7 +42,7 @@ pub struct PeerNetworkInfo {
 }
 
 /// chain protocol info
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub struct PeerProtocolsInfo {
     /// chain info
     pub eth: Option<EthProtocolInfo>,
@@ -52,7 +52,7 @@ pub struct PeerProtocolsInfo {
 
 /// eth chain version, difficulty, and head of chain
 /// which soft fork? Olympic, Frontier, Homestead, Metropolis, Serenity, etc.
-#[derive(Debug, PartialEq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub struct EthProtocolInfo {
     /// version
     pub version: u32,
@@ -63,7 +63,7 @@ pub struct EthProtocolInfo {
 }
 
 /// pip version, difficulty, and head
-#[derive(Serialize, PartialEq, Clone, Deserialize, Debug)]
+#[derive(Serialize, PartialEq, Eq, Clone, Deserialize, Debug)]
 pub struct PipProtocolInfo {
     /// version
     pub version: u32,

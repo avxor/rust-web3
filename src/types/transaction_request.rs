@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 /// When using this for `eth_estimateGas`, all the fields
 /// are optional. However, for usage in `eth_call` the
 /// `to` field must be provided.
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct CallRequest {
     /// Sender address (None for arbitrary address)
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -117,7 +117,7 @@ impl CallRequestBuilder {
 }
 
 /// Send Transaction Parameters
-#[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct TransactionRequest {
     /// Sender address
     pub from: Address,

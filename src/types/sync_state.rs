@@ -6,7 +6,7 @@ use serde::{
 };
 
 /// Information about current blockchain syncing operations.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SyncInfo {
     /// The block at which import began.
@@ -20,7 +20,7 @@ pub struct SyncInfo {
 }
 
 /// The current state of blockchain syncing operations.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SyncState {
     /// Blockchain is syncing.
     Syncing(SyncInfo),

@@ -8,7 +8,7 @@ use std::io::Error as IoError;
 pub type Result<T = ()> = std::result::Result<T, Error>;
 
 /// Transport-depended error.
-#[derive(Display, Debug, Clone, PartialEq)]
+#[derive(Display, Debug, Clone, PartialEq, Eq)]
 pub enum TransportError {
     /// Transport-specific error code.
     #[display(fmt = "code {}", _0)]
