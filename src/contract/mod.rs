@@ -330,6 +330,8 @@ impl<T: Transport> Contract<T> {
 
 #[cfg(feature = "signing")]
 mod contract_signing {
+    use ethabi::Token;
+
     use super::*;
     use crate::{
         api::Accounts,
@@ -375,6 +377,43 @@ mod contract_signing {
             accounts.sign_transaction(tx, key).await
         }
 
+        /// Create and sign a transaction.
+        pub async fn sign_raw_tokens(
+            &self,
+            func: &str,
+            params: &[Token],
+            options: Options,
+            key: impl signing::Key,
+        ) -> crate::Result<SignedTransaction> {
+            let fn_data = self
+                .abi
+                .function(func)
+                .and_then(|function| function.encode_input(&params))
+                // TODO [ToDr] SendTransactionWithConfirmation should support custom error type (so that we can return
+                // `contract::Error` instead of more generic `Error`.
+                .map_err(|err| crate::error::Error::Decoder(format!("{:?}", err)))?;
+            let accounts = Accounts::new(self.eth.transport().clone());
+            let mut tx = TransactionParameters {
+                nonce: options.nonce,
+                to: Some(self.address),
+                gas_price: options.gas_price,
+                data: Bytes(fn_data),
+                transaction_type: options.transaction_type,
+                access_list: options.access_list,
+                max_fee_per_gas: options.max_fee_per_gas,
+                max_priority_fee_per_gas: options.max_priority_fee_per_gas,
+                chain_id: options.chain_id,
+                ..Default::default()
+            };
+            if let Some(gas) = options.gas {
+                tx.gas = gas;
+            }
+            if let Some(value) = options.value {
+                tx.value = value;
+            }
+            accounts.sign_transaction(tx, key).await
+        }
+
         /// Submit contract call transaction to the transaction pool.
         ///
         /// Note this function DOES NOT wait for any confirmations, so there is no guarantees that the call is actually executed.
@@ -387,6 +426,21 @@ mod contract_signing {
             key: impl signing::Key,
         ) -> crate::Result<H256> {
             let signed = self.sign(func, params, options, key).await?;
+            self.eth.send_raw_transaction(signed.raw_transaction).await
+        }
+
+        /// Submit contract call transaction to the transaction pool.
+        ///
+        /// Note this function DOES NOT wait for any confirmations, so there is no guarantees that the call is actually executed.
+        /// If you'd rather wait for block inclusion, please use [`signed_call_with_confirmations`] instead.
+        pub async fn signed_call_raw_tokens(
+            &self,
+            func: &str,
+            params: &[Token],
+            options: Options,
+            key: impl signing::Key,
+        ) -> crate::Result<H256> {
+            let signed = self.sign_raw_tokens(func, params, options, key).await?;
             self.eth.send_raw_transaction(signed.raw_transaction).await
         }
 
