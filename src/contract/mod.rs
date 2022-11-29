@@ -284,7 +284,7 @@ impl<T: Transport> Contract<T> {
     }
 
     /// Call constant function
-    pub fn query_raw_tokens<R, A, B, P>(
+    pub fn query_raw_tokens<A, B>(
         &self,
         func: &str,
         params: &[Token],
