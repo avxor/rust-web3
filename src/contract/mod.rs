@@ -1,5 +1,7 @@
 //! Ethereum Contract Interface
 
+use ethabi::Token;
+
 use crate::{
     api::{Eth, Namespace},
     confirm,
@@ -281,6 +283,50 @@ impl<T: Transport> Contract<T> {
         }
     }
 
+    /// Call constant function
+    pub fn query_raw_tokens<R, A, B, P>(
+        &self,
+        func: &str,
+        params: &[Token],
+        from: A,
+        options: Options,
+        block: B,
+    ) -> impl Future<Output = Result<Vec<Token>>> + '_
+    where
+        A: Into<Option<Address>>,
+        B: Into<Option<BlockId>>,
+    {
+        let result = self
+            .abi
+            .function(func)
+            .and_then(|function| function.encode_input(params).map(|call| (call, function)))
+            .map(|(call, function)| {
+                let call_future = self.eth.call(
+                    CallRequest {
+                        from: from.into(),
+                        to: Some(self.address),
+                        gas: options.gas,
+                        gas_price: options.gas_price,
+                        value: options.value,
+                        data: Some(Bytes(call)),
+                        transaction_type: options.transaction_type,
+                        access_list: options.access_list,
+                        max_fee_per_gas: options.max_fee_per_gas,
+                        max_priority_fee_per_gas: options.max_priority_fee_per_gas,
+                    },
+                    block.into(),
+                );
+                (call_future, function)
+            });
+        // NOTE for the batch transport to work correctly, we must call `transport.execute` without ever polling the future,
+        // hence it cannot be a fully `async` function.
+        async {
+            let (call_future, function) = result?;
+            let bytes = call_future.await?;
+            Ok(function.decode_output(&bytes.0)?)
+        }
+    }
+
     /// Find events matching the topics.
     pub async fn events<A, B, C, R>(&self, event: &str, topic0: A, topic1: B, topic2: C) -> Result<Vec<R>>
     where
@@ -388,7 +434,7 @@ mod contract_signing {
             let fn_data = self
                 .abi
                 .function(func)
-                .and_then(|function| function.encode_input(&params))
+                .and_then(|function| function.encode_input(params))
                 // TODO [ToDr] SendTransactionWithConfirmation should support custom error type (so that we can return
                 // `contract::Error` instead of more generic `Error`.
                 .map_err(|err| crate::error::Error::Decoder(format!("{:?}", err)))?;
