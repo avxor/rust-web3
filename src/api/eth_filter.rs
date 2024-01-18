@@ -102,7 +102,7 @@ impl<T: Transport, I> Clone for BaseFilter<T, I> {
         BaseFilter {
             id: self.id.clone(),
             transport: self.transport.clone(),
-            item: PhantomData::default(),
+            item: PhantomData,
         }
     }
 }

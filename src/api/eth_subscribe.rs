@@ -73,7 +73,7 @@ impl<T: DuplexTransport, I> SubscriptionStream<T, I> {
 
     /// Unsubscribe from the event represented by this stream
     pub async fn unsubscribe(self) -> error::Result<bool> {
-        let &SubscriptionId(ref id) = &self.id;
+        let SubscriptionId(id) = &self.id;
         let id = helpers::serialize(&id);
         let response = self.transport.execute("eth_unsubscribe", vec![id]).await?;
         helpers::decode(response)

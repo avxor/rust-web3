@@ -134,8 +134,17 @@ impl WsServerTask {
                 let stream = async_native_tls::connect(host, stream).await?;
                 MaybeTlsStream::Tls(compat::compat(stream))
             }
-            #[cfg(not(any(feature = "ws-tls-tokio", feature = "ws-tls-async-std")))]
-            panic!("The library was compiled without TLS support. Enable ws-tls-tokio or ws-tls-async-std feature.");
+            #[cfg(all(
+                feature = "ws-rustls-tokio",
+                not(feature = "ws-tls-tokio"),
+                not(feature = "ws-tls-async-std")
+            ))]
+            {
+                let stream = tokio_rustls_connect(host, stream).await?;
+                MaybeTlsStream::Tls(compat::compat(stream))
+            }
+            #[cfg(not(any(feature = "ws-tls-tokio", feature = "ws-tls-async-std", feature = "ws-rustls-tokio")))]
+            panic!("The library was compiled without TLS support. Enable ws-tls-tokio, ws-rustls-tokio or ws-tls-async-std feature.");
         } else {
             let stream = compat::compat(stream);
             MaybeTlsStream::Plain(stream)
@@ -245,6 +254,32 @@ impl WsServerTask {
     }
 }
 
+#[cfg(feature = "ws-rustls-tokio")]
+async fn tokio_rustls_connect(
+    host: &str,
+    stream: tokio::net::TcpStream,
+) -> error::Result<tokio_rustls::client::TlsStream<tokio::net::TcpStream>> {
+    use rustls_pki_types::ServerName;
+    use std::convert::TryFrom;
+    use tokio_rustls::rustls::{ClientConfig, RootCertStore};
+
+    let client_conf = ClientConfig::builder()
+        .with_root_certificates({
+            let mut root_cert_store = RootCertStore::empty();
+            root_cert_store.extend(webpki_roots::TLS_SERVER_ROOTS.iter().cloned());
+            root_cert_store
+        })
+        .with_no_client_auth();
+
+    let dnsname = ServerName::try_from(host)
+        .map_err(|err| error::Error::Transport(TransportError::Message(format!("Invalid host: {err}"))))?
+        .to_owned();
+
+    Ok(tokio_rustls::TlsConnector::from(Arc::new(client_conf))
+        .connect(dnsname, stream)
+        .await?)
+}
+
 fn as_data_stream<T: Unpin + futures::AsyncRead + futures::AsyncWrite>(
     receiver: soketto::connection::Receiver<T>,
 ) -> impl Stream<Item = Result<Vec<u8>, soketto::connection::Error>> {
@@ -268,7 +303,7 @@ fn handle_message(
             let id = params.get("subscription");
             let result = params.get("result");
 
-            if let (Some(&rpc::Value::String(ref id)), Some(result)) = (id, result) {
+            if let (Some(rpc::Value::String(id)), Some(result)) = (id, result) {
                 let id: SubscriptionId = id.clone().into();
                 if let Some(stream) = subscriptions.get(&id) {
                     if let Err(e) = stream.unbounded_send(result.clone()) {
@@ -289,9 +324,9 @@ fn handle_message(
             _ => vec![],
         };
 
-        let id = match outputs.get(0) {
-            Some(&rpc::Output::Success(ref success)) => success.id.clone(),
-            Some(&rpc::Output::Failure(ref failure)) => failure.id.clone(),
+        let id = match outputs.first() {
+            Some(rpc::Output::Success(success)) => success.id.clone(),
+            Some(rpc::Output::Failure(failure)) => failure.id.clone(),
             None => rpc::Id::Num(0),
         };
 
@@ -512,8 +547,11 @@ pub mod compat {
     /// TLS stream type for tokio runtime.
     #[cfg(feature = "ws-tls-tokio")]
     pub type TlsStream = Compat<async_native_tls::TlsStream<tokio::net::TcpStream>>;
+    /// Rustls TLS stream type for tokio runtime.
+    #[cfg(all(feature = "ws-rustls-tokio", not(feature = "ws-tls-tokio")))]
+    pub type TlsStream = Compat<tokio_rustls::client::TlsStream<tokio::net::TcpStream>>;
     /// Dummy TLS stream type.
-    #[cfg(not(feature = "ws-tls-tokio"))]
+    #[cfg(all(not(feature = "ws-tls-tokio"), not(feature = "ws-rustls-tokio")))]
     pub type TlsStream = TcpStream;
 
     /// Create new TcpStream object.

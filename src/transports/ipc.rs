@@ -269,7 +269,7 @@ fn notify(
         let id = params.get("subscription");
         let result = params.get("result");
 
-        if let (Some(&rpc::Value::String(ref id)), Some(result)) = (id, result) {
+        if let (Some(rpc::Value::String(id)), Some(result)) = (id, result) {
             let id: SubscriptionId = id.clone().into();
             if let Some(tx) = subscription_txs.get(&id) {
                 if let Err(e) = tx.send(result.clone()) {
@@ -394,7 +394,7 @@ mod test {
                 })
             );
 
-            tx.write(r#"{"jsonrpc": "2.0", "id": 1, "result": {"test": 1}}"#.as_ref())
+            tx.write_all(r#"{"jsonrpc": "2.0", "id": 1, "result": {"test": 1}}"#.as_ref())
                 .await
                 .unwrap();
             tx.flush().await.unwrap();
@@ -417,7 +417,7 @@ mod test {
 
             let response_bytes = r#"{"jsonrpc": "2.0", "id": 2, "result": {"test": "string1"}}"#;
             for chunk in response_bytes.as_bytes().chunks(3) {
-                tx.write(chunk).await.unwrap();
+                tx.write_all(chunk).await.unwrap();
                 tx.flush().await.unwrap();
             }
         }
