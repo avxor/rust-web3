@@ -29,14 +29,14 @@ serde_json = "1.0.39"
 tiny-keccak = { version = "2.0.1", features = ["keccak"] }
 pin-project = "1.0"
 # Optional deps
-secp256k1 = { version = "0.28", features = ["recovery"], optional = true }
-once_cell = { version = "1.8.0", optional = true }
+secp256k1 = { version = "0.29", features = ["recovery"], optional = true }
+once_cell = { version = "1.19.0", optional = true }
 
 ## HTTP
 
-base64 = { version = "0.21", optional = true }
+base64 = { version = "0.22", optional = true }
 bytes = { version = "1.0", optional = true }
-reqwest = { version = "0.11", optional = true, default-features = false, features = [
+reqwest = { version = "0.12", optional = true, default-features = false, features = [
   "json",
 ] }
 headers = { version = "0.4", optional = true }
@@ -44,14 +44,14 @@ headers = { version = "0.4", optional = true }
 # async-native-tls = { git = "https://github.com/async-email/async-native-tls.git", rev = "b5b5562d6cea77f913d4cbe448058c031833bf17", optional = true, default-features = false }
 # Temporarily use forked version released to crates.io
 async-native-tls = { package = "web3-async-native-tls", version = "0.4", optional = true, default-features = false }
-tokio-rustls = { version = "0.25", optional = true }
+tokio-rustls = { version = "0.26", optional = true }
 rustls-pki-types = { version = "1", optional = true }
 webpki-roots = { version = "0.26", optional = true }
 async-std = { version = "1.6", optional = true }
-tokio = { version = "1.0", optional = true, features = ["full"] }
+tokio = { version = "1.37.0", optional = true, features = ["full"] }
 tokio-stream = { version = "0.1", optional = true }
 tokio-util = { version = "0.7", optional = true, features = ["compat", "io"] }
-soketto = { version = "0.7.0", optional = true }
+soketto = { version = "0.8.0", optional = true }
 ## Shared (WS, HTTP)
 url = { version = "2.1", optional = true }
 ## EIP-1193
@@ -59,14 +59,14 @@ js-sys = { version = "0.3.45", optional = true }
 ### This is a transitive dependency, only here so we can turn on its wasm_bindgen feature
 
 getrandom = { version = "0.2", features = ["js"], optional = true }
-rand = { version = "0.8.1", optional = true }
+rand = { version = "0.8.5", optional = true }
 serde-wasm-bindgen = { version = "0.6.0", optional = true }
 wasm-bindgen = { version = "0.2.68", optional = true }
 wasm-bindgen-futures = { version = "0.4.18", optional = true }
 
 [dev-dependencies]
 # For examples
-env_logger = "0.10"
+env_logger = "0.11"
 hex-literal = "0.4"
 wasm-bindgen-test = "0.3.19"
 
