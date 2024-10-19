@@ -86,7 +86,7 @@ pub trait DuplexTransport: Transport {
 
 impl<X, T> Transport for X
 where
-    T: Transport + ?Sized,
+    T: Transport,
     X: std::ops::Deref<Target = T>,
     X: std::fmt::Debug,
     X: Clone,
@@ -104,7 +104,7 @@ where
 
 impl<X, T> BatchTransport for X
 where
-    T: BatchTransport + ?Sized,
+    T: BatchTransport,
     X: std::ops::Deref<Target = T>,
     X: std::fmt::Debug,
     X: Clone,
@@ -121,7 +121,7 @@ where
 
 impl<X, T> DuplexTransport for X
 where
-    T: DuplexTransport + ?Sized,
+    T: DuplexTransport,
     X: std::ops::Deref<Target = T>,
     X: std::fmt::Debug,
     X: Clone,

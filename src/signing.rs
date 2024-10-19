@@ -36,7 +36,7 @@ mod feature_gated {
         ecdsa::{RecoverableSignature, RecoveryId},
         All, Message, PublicKey, Secp256k1,
     };
-    use std::ops::Deref;
+    use std::{convert::TryFrom, ops::Deref};
 
     static CONTEXT: Lazy<Secp256k1<All>> = Lazy::new(Secp256k1::new);
 
@@ -49,6 +49,7 @@ mod feature_gated {
     /// at:
     /// - https://github.com/graphprotocol/solidity-bindgen/blob/master/solidity-bindgen/src/secrets.rs
     /// - or https://crates.io/crates/zeroize
+    ///
     /// if you care enough about your secrets to be used securely.
     ///
     /// If it's enough to pass a reference to `SecretKey` (lifetimes) than you can use `SecretKeyRef`
@@ -103,7 +104,7 @@ mod feature_gated {
             let message = Message::from_digest_slice(message).map_err(|_| SigningError::InvalidMessage)?;
             let (recovery_id, signature) = CONTEXT.sign_ecdsa_recoverable(&message, self).serialize_compact();
 
-            let standard_v = recovery_id.to_i32() as u64;
+            let standard_v = i32::from(recovery_id) as u64;
             let v = if let Some(chain_id) = chain_id {
                 // When signing with a chain ID, add chain replay protection.
                 standard_v + 35 + chain_id * 2
@@ -121,7 +122,7 @@ mod feature_gated {
             let message = Message::from_digest_slice(message).map_err(|_| SigningError::InvalidMessage)?;
             let (recovery_id, signature) = CONTEXT.sign_ecdsa_recoverable(&message, self).serialize_compact();
 
-            let v = recovery_id.to_i32() as u64;
+            let v = i32::from(recovery_id) as u64;
             let r = H256::from_slice(&signature[..32]);
             let s = H256::from_slice(&signature[32..]);
 
@@ -138,7 +139,7 @@ mod feature_gated {
     /// Signature and `recovery_id` can be obtained from `types::Recovery` type.
     pub fn recover(message: &[u8], signature: &[u8], recovery_id: i32) -> Result<Address, RecoveryError> {
         let message = Message::from_digest_slice(message).map_err(|_| RecoveryError::InvalidMessage)?;
-        let recovery_id = RecoveryId::from_i32(recovery_id).map_err(|_| RecoveryError::InvalidSignature)?;
+        let recovery_id = RecoveryId::try_from(recovery_id).map_err(|_| RecoveryError::InvalidSignature)?;
         let signature =
             RecoverableSignature::from_compact(signature, recovery_id).map_err(|_| RecoveryError::InvalidSignature)?;
         let public_key = CONTEXT

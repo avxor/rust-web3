@@ -247,7 +247,7 @@ macro_rules! int_tokenizable {
                     // NOTE: Rust does sign extension when converting from a
                     // signed integer to an unsigned integer, so:
                     // `-1u8 as u128 == u128::max_value()`
-                    U256::from(self as u128) | U256([0, 0, u64::max_value(), u64::max_value()])
+                    U256::from(self as u128) | U256([0, 0, u64::MAX, u64::MAX])
                 } else {
                     self.into()
                 };
