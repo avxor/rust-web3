@@ -75,7 +75,7 @@ pub trait Tokenize {
     fn into_tokens(self) -> Vec<Token>;
 }
 
-impl<'a> Tokenize for &'a [Token] {
+impl Tokenize for &[Token] {
     fn into_tokens(self) -> Vec<Token> {
         self.to_vec()
     }

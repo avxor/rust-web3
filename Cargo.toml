@@ -35,7 +35,7 @@ once_cell = { version = "1.20.2", optional = true }
 ## HTTP
 base64 = { version = "0.22", optional = true }
 bytes = { version = "1", optional = true }
-reqwest = { version = "0.12", optional = true, default-features = false, features = [
+reqwest = { version = "0.13", optional = true, default-features = false, features = [
   "json",
 ] }
 headers = { version = "0.4", optional = true }
@@ -93,7 +93,7 @@ _http_base = ["reqwest", "bytes", "url", "base64"]
 http = ["_http_base"]
 http-tls = ["http", "reqwest/default-tls"]
 http-native-tls = ["http", "reqwest/native-tls"]
-http-rustls-tls = ["http", "reqwest/rustls-tls"]
+http-rustls-tls = ["http", "reqwest/rustls"]
 signing = ["secp256k1", "once_cell"]
 ws-tokio = ["soketto", "url", "tokio", "tokio-util", "headers"]
 ws-async-std = ["soketto", "url", "async-std", "headers"]
